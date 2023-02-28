@@ -66,7 +66,8 @@ const FRAME2 = d3
   .append("svg")
   .attr("height", FRAME_HEIGHT)
   .attr("width", FRAME_WIDTH)
-  .attr("class", "frame");
+  .attr("class", "frame")
+  .attr("class", "frame2");
 
 d3.csv("data/iris.csv").then((data) => {
   const MAX_X2 = d3.max(data, (d) => {
@@ -185,7 +186,7 @@ FRAME3.append("g")
 //   .attr("fill", "#69a3b2");
 
 // Add brushing
-d3.select("svg").call(
+d3.select(".frame2").call(
   d3
     .brush() // Add the brush feature using the d3.brush function
     .extent([
