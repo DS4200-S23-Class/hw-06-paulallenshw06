@@ -1,28 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="./style.css" />
+    <title>hw-06</title>
+    <script src="js/d3.v6.1.1/d3.min.js"></script>
+  </head>
 
-<head>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="./style.css" />
-  <title>hw-06</title>
-  <script src="js/d3.v6.1.1/d3.min.js"></script>
-</head>
-
-<body>
-  <h1 class="header">hw-06 - D3 Brushing & Linking</h1>
-  <div id="main">
-    <div id="col1">
-      <h2 class="header">Petal Length VS Sepal Length</h2>
+  <!--Main Body for the charts-->
+  <body>
+    <h1 class="header">hw-06 - D3 Brushing & Linking</h1>
+    <div id="main">
+      <div id="col1">
+        <h2 class="header">Petal Length VS Sepal Length</h2>
+      </div>
+      <div id="col2">
+        <h2 class="header">Petal Width VS Sepal Width</h2>
+      </div>
+      <div id="col3">
+        <h2 class="header">Counts of Species</h2>
+      </div>
     </div>
-    <div id="col2">
-      <h2 class="header">Petal Width VS Sepal Width</h2>
+    <div>
+      <h1 class="header">Acknowledgements</h1>
+      <ul>
+        <li>https://dmitripavlutin.com/access-object-properties-javascript/</li>
+        <li>
+          https://stackoverflow.com/questions/31608928/event-target-classlist-doesnt-have-indexof-method
+        </li>
+        <li>https://www.w3schools.com/jsref/prop_element_classlist.asp</li>
+        <li>
+          https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in
+        </li>
+        <li>
+          https://d3-graph-gallery.com/graph/interactivity_brush.html#realgraph
+        </li>
+      </ul>
     </div>
-    <div id="col3">
-      <h2 class="header">Counts of Species</h2>
-    </div>
-  </div>
-  <script src="script.js"></script>
-
-</body>
-
+    <script src="script.js"></script>
+  </body>
 </html>

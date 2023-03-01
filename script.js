@@ -6,6 +6,7 @@ const FRAME_WIDTH = 500;
 const VIS_HEIGHT = FRAME_HEIGHT - MARGINS.top - MARGINS.bottom;
 const VIS_WIDTH = FRAME_WIDTH - MARGINS.left - MARGINS.right;
 
+//Adding color to the points
 const colorScale = d3
   .scaleOrdinal()
   .domain(["setosa", "versicolor", "virginica"])
@@ -33,6 +34,7 @@ const FRAME3 = d3
   .attr("width", FRAME_WIDTH)
   .attr("class", "frame");
 
+//Bar chart data
 const barData = [
   { Species: "setosa", count: 50 },
   { Species: "versicolor", count: 50 },
@@ -40,7 +42,6 @@ const barData = [
 ];
 
 d3.csv("data/iris.csv").then((data) => {
-
   const MAX_X = d3.max(data, (d) => {
     return parseInt(d.Sepal_Length) + 1;
   });
@@ -52,6 +53,7 @@ d3.csv("data/iris.csv").then((data) => {
   const X_SCALE = d3.scaleLinear().domain([0, MAX_X]).range([0, VIS_WIDTH]);
   const Y_SCALE = d3.scaleLinear().domain([0, MAX_Y]).range([VIS_HEIGHT, 0]);
 
+  //Making point selection a variable so we can link by ID later
   const listCircles = FRAME1.selectAll("points")
     .data(data)
     .enter()
@@ -84,7 +86,6 @@ d3.csv("data/iris.csv").then((data) => {
     .attr("transform", "translate(" + MARGINS.right + ", " + MARGINS.top + ")")
     .call(d3.axisLeft(Y_SCALE).ticks(8))
     .attr("font-size", "13px");
-
 
   // Define the scales for the x-axis and y-axis
   const X_SCALE3 = d3
@@ -133,8 +134,6 @@ d3.csv("data/iris.csv").then((data) => {
     .call(d3.axisLeft(Y_SCALE3).ticks(8))
     .attr("font-size", "13px");
 
-
-
   const MAX_X2 = d3.max(data, (d) => {
     return parseInt(d.Sepal_Width) + 1;
   });
@@ -146,6 +145,7 @@ d3.csv("data/iris.csv").then((data) => {
   const X_SCALE2 = d3.scaleLinear().domain([0, MAX_X2]).range([0, VIS_WIDTH]);
   const Y_SCALE2 = d3.scaleLinear().domain([0, MAX_Y2]).range([VIS_HEIGHT, 0]);
 
+  //making point selection for chart 2 into graph so we can link by ID
   const listCircles2 = FRAME2.selectAll("points")
     .data(data)
     .enter()
@@ -162,7 +162,7 @@ d3.csv("data/iris.csv").then((data) => {
     .attr("r", 7)
     .attr("opacity", 0.5)
     .attr("class", (d) => {
-      return ("point " + d.Species);
+      return "point " + d.Species;
     })
     .attr("fill", function (d) {
       return colorScale(d.Species);
@@ -183,7 +183,10 @@ d3.csv("data/iris.csv").then((data) => {
 
   const brush = d3
     .brush()
-    .extent([[0, 0], [VIS_WIDTH + MARGINS.left, VIS_HEIGHT + MARGINS.top]])
+    .extent([
+      [0, 0],
+      [VIS_WIDTH + MARGINS.left, VIS_HEIGHT + MARGINS.top],
+    ])
     .on("brush", brushFn);
 
   // Create the brush
@@ -192,52 +195,51 @@ d3.csv("data/iris.csv").then((data) => {
   // Define the brushing function
   function brushFn(event) {
     // Get the selection coordinate
-    const selection = event.selection; // looks like [ [12,11], [132,178]]
+    const selection = event.selection;
 
+    //give class selected to chart2 points if isBrushed == True
     listCircles2.classed("selected", function (d) {
-      return isBrushed(selection, X_SCALE2(d.Sepal_Width) + MARGINS.left,
-        Y_SCALE2(d.Petal_Width) + MARGINS.top)
-    })
-
-
+      return isBrushed(
+        selection,
+        X_SCALE2(d.Sepal_Width) + MARGINS.left,
+        Y_SCALE2(d.Petal_Width) + MARGINS.top
+      );
+    });
 
     listCircles.classed("selected", function (d) {
-
-
       let idPresent = false;
 
       for (let i = 0; i < listCircles2._groups[0].length; i++) {
-
-        if (d.ID == listCircles2._groups[0][i].id && listCircles2._groups[0][i].classList.length == 3) {
-
-
+        //comparing on whether IDs of 2 charts are equal and chart2 point IS selected
+        if (
+          d.ID == listCircles2._groups[0][i].id &&
+          listCircles2._groups[0][i].classList.length == 3
+        ) {
           idPresent = true;
         }
       }
 
       return idPresent;
     });
-
 
     listBars.classed("selected", function (d) {
-
-
       let idPresent = false;
 
       for (let i = 0; i < listCircles2._groups[0].length; i++) {
-
-        if (listCircles2._groups[0][i].classList.contains(d.Species) && listCircles2._groups[0][i].classList.length == 3) {
-
-
+        //comparing for equivalent species and chart2 point is selected
+        if (
+          listCircles2._groups[0][i].classList.contains(d.Species) &&
+          listCircles2._groups[0][i].classList.length == 3
+        ) {
           idPresent = true;
         }
       }
 
       return idPresent;
     });
-
   }
 
+  //is a point within the coordinates?
   function isBrushed(brush_coords, cx, cy) {
     const x0 = brush_coords[0][0],
       x1 = brush_coords[1][0],
@@ -245,5 +247,4 @@ d3.csv("data/iris.csv").then((data) => {
       y1 = brush_coords[1][1];
     return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
   }
-
 });
