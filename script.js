@@ -81,7 +81,7 @@ d3.csv("data/iris.csv").then((data) => {
   const X_SCALE = d3.scaleLinear().domain([0, MAX_X2]).range([0, VIS_WIDTH]);
   const Y_SCALE = d3.scaleLinear().domain([0, MAX_Y2]).range([VIS_HEIGHT, 0]);
 
-  FRAME2.selectAll("points")
+  let listCircles = FRAME2.selectAll("points")
     .data(data)
     .enter()
     .append("circle")
@@ -110,6 +110,62 @@ d3.csv("data/iris.csv").then((data) => {
     .attr("transform", "translate(" + MARGINS.right + ", " + MARGINS.top + ")")
     .call(d3.axisLeft(Y_SCALE).ticks(16))
     .attr("font-size", "13px");
+
+  var brush = d3
+    .brush()
+    .extent([[0, 0], [VIS_WIDTH + MARGINS.left, VIS_HEIGHT + MARGINS.top]])
+    .on("brush", brushFn);
+
+  // Create the brush
+  FRAME2.append("g").attr("class", "brush").call(brush);
+
+  // Define the brushing function
+  function brushFn(event) {
+    // Get the selection coordinate
+    let selection = event.selection; // looks like [ [12,11], [132,178]]
+
+    listCircles.classed("selected", function (d) {
+      return isBrushed(selection, X_SCALE(d.Sepal_Width) + MARGINS.left,
+        Y_SCALE(d.Petal_Width) + MARGINS.top)
+    })
+
+    console.log(isBrushed)
+
+    // var selectedPoints = data.filter(function (d) {
+    //   var x = X_SCALE(d.Sepal_Width);
+    //   var y = Y_SCALE(d.Petal_Width);
+    //   // console.log(selection[0][0], x, selection[1][0]);
+    //   // console.log(selection[0][1], y, selection[1][1]);
+
+    //   return (
+    //     x >= selection[0][0] &&
+    //     x <= selection[1][0] &&
+    //     y >= selection[0][1] &&
+    //     y <= selection[1][1]
+    //   );
+    // });
+    // Update other visual elements based on selected points
+    //updateSelectedPoints(selectedPoints);
+  }
+
+  function isBrushed(brush_coords, cx, cy) {
+    var x0 = brush_coords[0][0],
+      x1 = brush_coords[1][0],
+      y0 = brush_coords[0][1],
+      y1 = brush_coords[1][1];
+    return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;    // This return TRUE or FALSE depending on if the points is in the selected area
+  }
+
+  // Add linking behavior
+  // function updateSelectedPoints(selectedPoints) {
+  //   console.log("done")
+  //   for (let i = 0; i < selectedPoints.length; i++) {
+  //     selectedPoints[i].attr("fill", "red");
+  //   }
+  //   // selectedPoints.each(function () {
+  //   //   d3.select(this).attr("fill", "red");
+  //   // });
+  // }
 });
 
 const FRAME3 = d3
@@ -175,65 +231,65 @@ FRAME3.append("g")
   .call(d3.axisLeft(yScale).ticks(8))
   .attr("font-size", "13px");
 
-// // Draw a circle
-// var myCircle = d3
-//   .select("#dataviz_brushChange")
-//   .append("g")
-//   .append("circle")
-//   .attr("cx", 150)
-//   .attr("cy", 150)
-//   .attr("r", 40)
-//   .attr("fill", "#69a3b2");
+// Draw a circle
+var myCircle = d3
+  .select("#dataviz_brushChange")
+  .append("g")
+  .append("circle")
+  .attr("cx", 150)
+  .attr("cy", 150)
+  .attr("r", 40)
+  .attr("fill", "#69a3b2");
 
-// Add brushing
-d3.select(".frame2").call(
-  d3
-    .brush() // Add the brush feature using the d3.brush function
-    .extent([
-      [0, 0],
-      [VIS_WIDTH + MARGINS.left, VIS_HEIGHT + MARGINS.top],
-    ]) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
-    .on("start brush", updateChart) // Each time the brush selection changes, trigger the 'updateChart' function
-);
+// // Add brushing
+// d3.select(".frame2").call(
+//   d3
+//     .brush() // Add the brush feature using the d3.brush function
+//     .extent([
+//       [0, 0],
+//       [VIS_WIDTH + MARGINS.left, VIS_HEIGHT + MARGINS.top],
+//     ]) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
+//     .on("start brush", updateChart) // Each time the brush selection changes, trigger the 'updateChart' function
+// );
 
-// Function that is triggered when brushing is performed
-function updateChart(event) {
-  // Get the selection coordinate
-  selection = event.selection; // looks like [ [12,11], [132,178]]
+// // Function that is triggered when brushing is performed
+// function updateChart(event) {
+//   // Get the selection coordinate
+//   selection = event.selection; // looks like [ [12,11], [132,178]]
 
-  if (selection) {
-    var selectedPoints = data.filter(function (d) {
-      var x = xScale(d.x);
-      var y = yScale(d.y);
-      return (
-        x >= selection[0][0] &&
-        x <= selection[1][0] &&
-        y >= selection[0][1] &&
-        y <= selection[1][1]
-      );
-    });
-    // Update other visual elements based on selected points
-    updateSelectedPoints(selectedPoints);
-  }
-}
-
-// Add linking behavior
-function updateSelectedPoints(selectedPoints) {
-  FRAME1.attr("fill", function (d) {
-    return selectedPoints.includes(d) ? "red" : "blue";
-  });
-}
-
-// Is the circle in the selection?
-//   isBrushed =
-//     extent[0][0] <= myCircle.attr("cx") &&
-//     extent[1][0] >= myCircle.attr("cx") && // Check X coordinate
-//     extent[0][1] <= myCircle.attr("cy") &&
-//     extent[1][1] >= myCircle.attr("cy"); // And Y coordinate
-
-//   // Circle is green if in the selection, pink otherwise
-//   if (isBrushed) {
-//     myCircle.transition().duration(200).style("fill", "green");
-//   } else {
-//     myCircle.transition().duration(200).style("fill", "pink");
+//   if (selection) {
+//     var selectedPoints = data.filter(function (d) {
+//       var x = xScale(d.x);
+//       var y = yScale(d.y);
+//       return (
+//         x >= selection[0][0] &&
+//         x <= selection[1][0] &&
+//         y >= selection[0][1] &&
+//         y <= selection[1][1]
+//       );
+//     });
+//     // Update other visual elements based on selected points
+//     updateSelectedPoints(selectedPoints);
 //   }
+// }
+
+// // Add linking behavior
+// function updateSelectedPoints(selectedPoints) {
+//   FRAME1.attr("fill", function (d) {
+//     return selectedPoints.includes(d) ? "red" : "blue";
+//   });
+// }
+
+// // Is the circle in the selection?
+// let isBrushed =
+//   extent[0][0] <= myCircle.attr("cx") &&
+//   extent[1][0] >= myCircle.attr("cx") && // Check X coordinate
+//   extent[0][1] <= myCircle.attr("cy") &&
+//   extent[1][1] >= myCircle.attr("cy"); // And Y coordinate
+
+// // Circle is green if in the selection, pink otherwise
+// if (isBrushed) {
+//   myCircle.transition().duration(200).style("fill", "green");
+// } else {
+//   myCircle.transition().duration(200).style("fill", "pink");
+// }
